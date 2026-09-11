@@ -27,25 +27,29 @@ html_code = """<!DOCTYPE html>
             user-select: none;
         }
         h2 { margin: 5px 0; color: #f1c40f; font-size: 22px; text-align: center; }
-        .user-info { font-size: 14px; color: #8e44ad; margin-bottom: 10px; font-weight: bold; }
-        #board {
-            width: 90vw;
-            height: 90vw;
-            max-width: 360px;
-            max-height: 360px;
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(8, 1fr);
+        .user-info { font-size: 14px; color: #8e44ad; margin-bottom: 12px; font-weight: bold; }
+        #board-wrapper {
+            width: 320px;
+            height: 320px;
             border: 4px solid #333;
-            border-radius: 6px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.8);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            background-color: #769656;
         }
-        .square {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
+        table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        td {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 28px;
             cursor: pointer;
+            line-height: 1;
         }
         .white { background-color: #eeeed2; color: #000; }
         .black { background-color: #769656; color: #000; }
@@ -56,7 +60,7 @@ html_code = """<!DOCTYPE html>
             background-color: #e67e22;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 22px;
             font-size: 14px;
             font-weight: bold;
             border-radius: 6px;
@@ -69,7 +73,9 @@ html_code = """<!DOCTYPE html>
     <h2>♔ Grandmaster Chess ♔</h2>
     <div class="user-info" id="user-name">O'yinchi: Shaxmatchi</div>
 
-    <div id="board"></div>
+    <div id="board-wrapper">
+        <table id="board"></table>
+    </div>
 
     <div class="status" id="status">Sizning yurishingiz (Oqlar)</div>
     <button onclick="initBoard()">Yangi O'yin</button>
@@ -111,21 +117,23 @@ html_code = """<!DOCTYPE html>
             const boardEl = document.getElementById('board');
             boardEl.innerHTML = '';
             for (let r = 0; r < 8; r++) {
+                const tr = document.createElement('tr');
                 for (let c = 0; c < 8; c++) {
-                    const sq = document.createElement('div');
+                    const td = document.createElement('td');
                     const isWhite = (r + c) % 2 === 0;
-                    sq.className = `square ${isWhite ? 'white' : 'black'}`;
+                    td.className = isWhite ? 'white' : 'black';
                     
                     const char = boardState[r][c];
-                    sq.innerText = pieces[char] || '';
+                    td.innerText = pieces[char] || '';
 
                     if (selectedSquare && selectedSquare.r === r && selectedSquare.col === c) {
-                        sq.classList.add('selected');
+                        td.classList.add('selected');
                     }
 
-                    sq.onclick = () => handleSquareClick(r, c);
-                    boardEl.appendChild(sq);
+                    td.onclick = () => handleSquareClick(r, c);
+                    tr.appendChild(td);
                 }
+                boardEl.appendChild(tr);
             }
         }
 
