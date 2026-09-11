@@ -4,8 +4,7 @@ from fastapi.responses import HTMLResponse
 
 app = FastAPI()
 
-html_code = """
-<!DOCTYPE html>
+html_code = """<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -76,9 +75,9 @@ html_code = """
     <button onclick="initBoard()">Yangi O'yin</button>
 
     <script>
-        var tg = window.Telegram.WebApp;
+        var tg = window.Telegram ? window.Telegram.WebApp : null;
         if (tg) { tg.expand(); }
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('user-name').innerText = 'O\'yinchi: ' + tg.initDataUnsafe.user.first_name;
         }
 
@@ -103,6 +102,7 @@ html_code = """
 
         function initBoard() {
             boardState = JSON.parse(JSON.stringify(initialBoard));
+            selectedSquare = null;
             renderBoard();
             document.getElementById('status').innerText = 'Sizning yurishingiz (Oqlar)';
         }
@@ -115,8 +115,6 @@ html_code = """
                     const sq = document.createElement('div');
                     const isWhite = (r + c) % 2 === 0;
                     sq.className = `square ${isWhite ? 'white' : 'black'}`;
-                    sq.dataset.row = r;
-                    sq.dataset.col = c;
                     
                     const char = boardState[r][c];
                     sq.innerText = pieces[char] || '';
@@ -138,5 +136,46 @@ html_code = """
                 } else {
                     boardState[r][c] = boardState[selectedSquare.r][selectedSquare.col];
                     boardState[selectedSquare.r][selectedSquare.col] = '';
-                    selectedSquare = nul
+                    selectedSquare = null;
+                    renderBoard();
+                    setTimeout(makeAiMove, 300);
+                    return;
+                }
+            } else {
+                if (boardState[r][c] && boardState[r][c] === boardState[r][c].toUpperCase()) {
+                    selectedSquare = { r: r, col: c };
+                }
+            }
+            renderBoard();
+        }
 
+        function makeAiMove() {
+            let moves = [];
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (boardState[r][c] && boardState[r][c] === boardState[r][c].toLowerCase()) {
+                        moves.push({ r: r, c: c });
+                    }
+                }
+            }
+            if (moves.length === 0) return;
+            let p = moves[Math.floor(Math.random() * moves.length)];
+            let emptySquare = { r: 5, c: Math.floor(Math.random() * 8) };
+            boardState[emptySquare.r][emptySquare.c] = boardState[p.r][p.c];
+            boardState[p.r][p.c] = '';
+            renderBoard();
+        }
+
+        initBoard();
+    </script>
+</body>
+</html>"""
+
+@app.get("/", response_class=HTMLResponse)
+def read_root():
+    return html_code
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
