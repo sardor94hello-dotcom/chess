@@ -12,7 +12,7 @@ html_code = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Grandmaster Chess</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <style>
         body {
             background-color: #1a1a1a;
@@ -72,7 +72,7 @@ html_code = """
 
     <div class="header">
         <h2>♔ Grandmaster Chess ♔</h2>
-        <div class="user-info" id="user-name">Foydalanuvchi: Shaxmatchi</div>
+        <div class="user-info" id="user-name">O'yinchi: Shaxmatchi</div>
     </div>
 
     <div id="board"></div>
@@ -85,7 +85,7 @@ html_code = """
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script>
         var tg = window.Telegram.WebApp;
         tg.expand();
